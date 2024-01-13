@@ -17,6 +17,7 @@ import importlib
 import math
 from typing import Optional, Callable, List, Tuple, Sequence
 import numpy as np
+from deepspeed import comm as dist
 
 deepspeed_is_installed = importlib.util.find_spec("deepspeed") is not None
 if(deepspeed_is_installed):
@@ -196,7 +197,7 @@ class LayerNorm(nn.Module):
         d = x.dtype
         deepspeed_is_initialized = (
             deepspeed_is_installed and 
-            deepspeed.utils.is_initialized()
+            dist.is_initialized()
         )
         if(d is torch.bfloat16 and not deepspeed_is_initialized):
             with torch.cuda.amp.autocast(enabled=False):
